@@ -1,0 +1,183 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ivory: #f4ede5;
+  --color-ivory-deep: #ece2d7;
+  --color-nude: #d8c2b5;
+  --color-rose: #a88775;
+  --color-rose-deep: #7a5c4e; /* rosé escurecido para textos pequenos (contraste AA) */
+  --color-espresso: #292321;
+  --color-espresso-soft: #3a322f;
+  --color-gold: #c2a477;
+  --color-muted: #6b5d56;
+
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--color-ivory);
+    color: var(--color-espresso);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Textura de papel muito sutil */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-nude); color: var(--color-espresso); }
+  :focus-visible {
+    outline: 1px solid var(--color-gold);
+    outline-offset: 4px;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  /* Botões: cantos quase retos, caixa alta espaçada */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0 1.75rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    overflow: hidden;
+    isolation: isolate;
+    transition: color 0.5s var(--ease-luxe), border-color 0.5s var(--ease-luxe), transform 0.2s ease;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.6s var(--ease-luxe);
+  }
+  .btn:hover::after { transform: scaleX(1); transform-origin: left; }
+  .btn:active { transform: scale(0.98); }
+  .btn svg { transition: transform 0.5s var(--ease-luxe); }
+  .btn:hover svg { transform: translateX(3px); }
+
+  /* Link sublinhado elegante */
+  .link-line {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.5s var(--ease-luxe);
+  }
+  .link-line:hover { background-size: 100% 1px; }
+
+  .arch { border-radius: 999px 999px 0 0; }
+}
+
+/* ---------- Revelação na rolagem ---------- */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.1s var(--ease-luxe), transform 1.1s var(--ease-luxe);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal='fade'] { transform: none; }
+.js [data-reveal='scale'] { transform: scale(1.04); }
+.js [data-reveal].is-visible { opacity: 1; transform: none; }
+
+/* Entrada do hero */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes unveil {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes slow-zoom {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+.anim-rise { animation: rise 1.2s var(--ease-luxe) both; animation-delay: var(--d, 0ms); }
+.anim-unveil { animation: unveil 1.6s var(--ease-luxe) both; animation-delay: var(--d, 0ms); }
+.anim-zoom { animation: slow-zoom 2.4s var(--ease-luxe) both; }
+.anim-spin { animation: spin-slow 28s linear infinite; }
+.anim-marquee { animation: marquee 45s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  .anim-marquee, .anim-spin { animation: none; }
+}
+
+/* Barra de rolagem oculta para carrosséis */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Variantes de botão (utilitários, aceitam prefixos como lg:) */
+@utility btn-dark {
+  background: var(--color-espresso);
+  color: var(--color-ivory);
+  &::after { background: var(--color-rose-deep); }
+}
+@utility btn-light {
+  background: var(--color-ivory);
+  color: var(--color-espresso);
+  &::after { background: var(--color-nude); }
+}
+@utility btn-outline {
+  border: 1px solid currentColor;
+  &::after { background: var(--color-espresso); }
+  &:hover { color: var(--color-ivory); border-color: var(--color-espresso); }
+}
+@utility btn-outline-light {
+  border: 1px solid rgb(244 237 229 / 0.5);
+  color: var(--color-ivory);
+  &::after { background: var(--color-ivory); }
+  &:hover { color: var(--color-espresso); border-color: var(--color-ivory); }
+}
